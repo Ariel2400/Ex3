@@ -1,4 +1,7 @@
+#include <memory>
+
 #include "bmp_parser.hpp"
+
 #define BMP_DECLARATION 0x4D42
 #define FILE_INFO_END 14
 #define FILE_DATA_HEAD_END 54
@@ -11,13 +14,45 @@
 using std::vector;
 class Matrix;
 
-// Created a parameterless constructor to solve an issue with the compilation of
-// the destructor
-BMP::BMP() {
-  throw std::runtime_error("can only create bmp object using a file path");
+void BMP::init(const BMP& other) {
+  file_header.file_type = other.file_header.file_type;
+  file_header.file_size = other.file_header.file_size;
+  file_header.reserved1 = other.file_header.reserved1;
+  file_header.reserved2 = other.file_header.reserved2;
+  file_header.offset_data = other.file_header.offset_data;
+  bmp_info_header.size = other.bmp_info_header.size;
+  bmp_info_header.width = other.bmp_info_header.width;
+  bmp_info_header.height = other.bmp_info_header.height;
+  bmp_info_header.planes = other.bmp_info_header.planes;
+  bmp_info_header.bit_count = other.bmp_info_header.bit_count;
+  bmp_info_header.compression = other.bmp_info_header.compression;
+  bmp_info_header.size_image = other.bmp_info_header.size_image;
+  bmp_info_header.x_pixels_per_meter = other.bmp_info_header.x_pixels_per_meter;
+  bmp_info_header.y_pixels_per_meter = other.bmp_info_header.y_pixels_per_meter;
+  bmp_info_header.colors_used = other.bmp_info_header.colors_used;
+  bmp_info_header.colors_important = other.bmp_info_header.colors_important;
+  bmp_color_palette.color_list = other.bmp_color_palette.color_list;
+  bmp_color_palette.pixel_color_indexes = other.bmp_color_palette.pixel_color_indexes;
+  pixels = other.pixels;
 }
 
-BMP::BMP(const std::string fname) { read(fname); }
+BMP::BMP(const std::string fname) { 
+  read(fname); 
+}
+
+BMP::BMP(const BMP& other) {
+  init(other);
+}
+
+BMP& BMP::operator=(const BMP& other) {
+  if(this != &other) {
+    delete bmp_color_palette.color_list;
+    delete bmp_color_palette.pixel_color_indexes;
+    delete pixels;
+    init(other);
+  }
+  return *this;
+}
 
 void BMP::read(const std::string fname) {
   vector<uint8_t> data;
@@ -295,4 +330,10 @@ void BMP::read_8_bit(std::ifstream *inp) {
               bmp_color_palette.pixel_color_indexes->getValue(i, j), 2));
     }
   }
+}
+
+
+int main() {
+  BMP bmp("lena-color.bmp");
+  bmp.write("lena_output.bmp");
 }

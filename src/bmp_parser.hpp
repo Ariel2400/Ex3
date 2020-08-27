@@ -55,8 +55,9 @@ struct BMP {
   Matrix *pixels = nullptr;
 
 public:
-  BMP();
   BMP(const std::string fname);
+  BMP(const BMP& other);
+  BMP& operator=(const BMP& other);
   void read(const std::string fname);
   void write(const std::string fname);
   void convert_to_grayscale();
@@ -64,6 +65,7 @@ public:
   ~BMP();
 
 private:
+  void init(const BMP& other);
   Matrix* vector_to_matrix(vector<uint8_t> vector, int height, int width);
   vector<uint8_t> matrix_to_vector(Matrix* matrix);
   void write_headers(std::ofstream &of);
