@@ -1,10 +1,13 @@
 #include <cstdbool>
 #include <fstream>
 #include <regex>
-#include <MatrixClass.h>
+#include <MatrixClass.hpp>
+
 Matrix read_matrix_from_file(const char* file_path){
     std::ifstream file(file_path);
-    if(is_matrix(file))
+    if(is_matrix(file)){
+        
+    }
 }
 bool is_matrix(std::ifstream file){
     std::basic_regex number = "[0-9]+"
