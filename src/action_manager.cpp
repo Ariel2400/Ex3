@@ -180,6 +180,7 @@ void ActionManager::perform_action(struct action action) {
     }
 }
 
+/*
 int main() {
     vector<std::string> args1;
     vector<std::string> args2;
@@ -193,3 +194,4 @@ int main() {
     ActionManager::perform_action(action1);
     ActionManager::perform_action(action2);
 }
+*/
