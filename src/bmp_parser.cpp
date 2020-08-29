@@ -14,7 +14,7 @@
 #define BITS_IN_A_BYTE 8
 
 using std::vector;
-class Matrix;
+//class Matrix;
 
 void BMP::init(const BMP& other) {
   file_header.file_type = other.file_header.file_type;

@@ -1,6 +1,6 @@
 #include "image_editor.hpp"
 
-void ImageEditor::rotate_image(const std::string imagePath, const std::string outputPath) {
+void ImageEditor::rotate(const std::string imagePath, const std::string outputPath) {
     BMP bmp(imagePath);
     bmp.rotate_image();
     bmp.write(outputPath);
