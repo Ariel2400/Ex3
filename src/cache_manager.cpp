@@ -25,7 +25,8 @@ bool Cache::is_file_in_cache(const std::string filepath) {
         closedir (dir);
         return false;
     } else {
-        throw std::runtime_error("Unable to open cache");
+        std::cerr << "Unable to open cache" << std::endl;
+        return false;
     }
 }
 
@@ -35,7 +36,7 @@ void Cache::store(const std::string filepath) {
         std::ifstream ifs(filepath, std::ios::binary);
         std::ofstream ofs(cache_filepath, std::ios::binary);
         if (!ifs || !ofs) {
-            throw std::runtime_error("Unable to store file in cache");
+            std::cerr << "Unable to store file in cache" << std::endl;
         }
         ofs << ifs.rdbuf();
         remove(filepath.c_str());
@@ -61,8 +62,12 @@ void Cache::clear() {
         }
         closedir (dir);
     } else {
-        throw std::runtime_error("Unable to open cache");
+        std::cerr << "Unable to open cache" << std::endl;
     }
 }
 
 Cache::~Cache(){}
+
+int main() {
+    
+}

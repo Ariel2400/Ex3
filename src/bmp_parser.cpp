@@ -60,7 +60,7 @@ void BMP::read(const std::string fname) {
     //read headers
     inp.read((char *)&file_header, sizeof(file_header));
     if (file_header.file_type != BMP_DECLARATION) {
-      throw std::runtime_error("Error! Unrecognized file format.");
+      std::cerr << "Error! Unrecognized file format." << std::endl;
     }
     inp.seekg(FILE_INFO_END, inp.beg);
     inp.read((char *)&bmp_info_header, sizeof(bmp_info_header));
@@ -76,11 +76,10 @@ void BMP::read(const std::string fname) {
     } else if (bmp_info_header.bit_count == 8) {
       read_8_bit(&inp);
     } else {
-      throw std::runtime_error(
-          "The program can treat only 24 or 8 bits per pixel BMP files");
+      std::cerr << "The program can treat only 24 or 8 bits per pixel BMP files" << std::endl;
     }
   } else {
-    throw std::runtime_error("Unable to open the input image file.");
+    std::cerr << "Unable to open the input image file." << std::endl;
   }
 }
 
@@ -93,11 +92,10 @@ void BMP::write(const std::string fname) {
     } else if (bmp_info_header.bit_count == 8) {
       write_8_bit(of);
     } else {
-      throw std::runtime_error(
-          "The program can treat only 24 or 8 bits per pixel BMP files");
+      std::cerr << "The program can treat only 24 or 8 bits per pixel BMP files" << std::endl;
     }
   } else {
-    throw std::runtime_error("Unable to open the output image file.");
+    std::cerr << "Unable to open the output image file." << std::endl;
   }
 }
 
