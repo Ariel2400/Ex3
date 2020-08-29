@@ -68,13 +68,13 @@ public:
 
 private:
   void init(const BMP& other);
-  uint32_t padding_to(uint32_t num, uint32_t align);
-  std::unique_ptr<Matrix> vector_to_matrix(vector<uint8_t> vector, int height, int width);
+  uint32_t padding_to(uint32_t num, uint32_t align) const;
+  std::unique_ptr<Matrix> vector_to_matrix(vector<uint8_t> vector, int height, int width) const;
   vector<uint8_t> matrix_to_vector(std::unique_ptr<Matrix> & matrix);
-  void write_headers(std::ofstream &of);
-  void write_headers_and_data(std::ofstream &of, vector<uint8_t> data);
+  void write_headers(std::ofstream &of) const;
+  void write_headers_and_data(std::ofstream &of, vector<uint8_t> data) const;
   void read_24_bit(std::ifstream *inp, vector<uint8_t> data);
   void read_8_bit(std::ifstream *inp);
-  void write_24_bit(std::ofstream &of, vector<uint8_t> data);
+  void write_24_bit(std::ofstream &of, vector<uint8_t> data) const;
   void write_8_bit(std::ofstream &of);
 };

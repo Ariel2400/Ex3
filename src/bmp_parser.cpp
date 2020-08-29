@@ -171,7 +171,7 @@ void BMP::rotate_image() {
 BMP::~BMP() {}
 
 //calculate the minimum number that needs to be added to 'num' to make it divisible by 'align'
-uint32_t BMP::padding_to(uint32_t num, uint32_t align) {
+uint32_t BMP::padding_to(uint32_t num, uint32_t align) const {
   uint32_t padding = 0;
   while((num + padding) % align != 0) {
     padding++;
@@ -179,7 +179,7 @@ uint32_t BMP::padding_to(uint32_t num, uint32_t align) {
   return padding;
 }
 
-std::unique_ptr<Matrix> BMP::vector_to_matrix(vector<uint8_t> vector, int height, int width) {
+std::unique_ptr<Matrix> BMP::vector_to_matrix(vector<uint8_t> vector, int height, int width) const {
   std::unique_ptr<Matrix> matrix = std::make_unique<Matrix>(height, width);
   for (int i = 0; i < height; ++i) {
     for (int j = 0; j < width; ++j) {
@@ -200,12 +200,12 @@ vector<uint8_t> BMP::matrix_to_vector(std::unique_ptr<Matrix> & matrix) {
   return vector;
 }
 
-void BMP::write_headers(std::ofstream &of) {
+void BMP::write_headers(std::ofstream &of) const {
   of.write((const char *)&file_header, sizeof(file_header));
   of.write((const char *)&bmp_info_header, sizeof(bmp_info_header));
 }
 
-void BMP::write_headers_and_data(std::ofstream &of, vector<uint8_t> data) {
+void BMP::write_headers_and_data(std::ofstream &of, vector<uint8_t> data) const {
   write_headers(of);
   of.write((const char *)data.data(), data.size());
 }
@@ -278,7 +278,7 @@ void BMP::read_8_bit(std::ifstream *inp) {
   }
 }
 
-void BMP::write_24_bit(std::ofstream &of, vector<uint8_t> data) {
+void BMP::write_24_bit(std::ofstream &of, vector<uint8_t> data) const {
   if (bmp_info_header.width % ALIGN_STRIDE == 0) {
     write_headers_and_data(of, data);
   } else {

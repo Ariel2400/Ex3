@@ -2,13 +2,13 @@
 
 class Cache {
     private:
-        bool is_file_in_cache(std::string filepath);
+        static bool is_file_in_cache(const std::string filepath);
     public:
         Cache();
         Cache(const Cache& other);
         Cache& operator=(const Cache & other);
-        void store(std::string filepath);
-        void search(std::string filepath);
-        void clear();
+        static void store(const std::string filepath);
+        static void search(const std::string filepath);
+        static void clear();
         ~Cache();
 };

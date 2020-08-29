@@ -4,8 +4,6 @@
 #include <iostream>
 #include <dirent.h>
 
-#define CACHE_PREFIX_LENGTH 6
-
 Cache::Cache() {}
 
 Cache::Cache(const Cache& other) {}
@@ -14,7 +12,7 @@ Cache&Cache:: operator=(const Cache & other) {
     return *this;
 }
 
-bool Cache::is_file_in_cache(std::string filepath) {
+bool Cache::is_file_in_cache(const std::string filepath) {
     DIR *dir;
     struct dirent *ent;
     if ((dir = opendir("cache")) != NULL) {
@@ -31,7 +29,7 @@ bool Cache::is_file_in_cache(std::string filepath) {
     }
 }
 
-void Cache::store(std::string filepath) {
+void Cache::store(const std::string filepath) {
     if (!is_file_in_cache(filepath)) {
         std::string cache_filepath("cache/" + filepath);
         std::ifstream ifs(filepath, std::ios::binary);
@@ -40,10 +38,11 @@ void Cache::store(std::string filepath) {
             throw std::runtime_error("Unable to store file in cache");
         }
         ofs << ifs.rdbuf();
+        remove(filepath.c_str());
     }
 }
 
-void Cache::search(std::string filepath) {
+void Cache::search(const std::string filepath) {
     if (is_file_in_cache(filepath)) {
         std::cout << "result found in cache" << std::endl;
     } else {
