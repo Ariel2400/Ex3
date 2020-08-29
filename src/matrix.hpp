@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#include "ErrorCode.hpp"
+#include "error_code.hpp"
 
 // The implementation of the struct is up to you
 typedef struct Matrix* PMatrix;

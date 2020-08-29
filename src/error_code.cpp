@@ -1,4 +1,4 @@
-#include "ErrorCode.hpp"
+#include "error_code.hpp"
 
 /**
  * @brief Checks if a given error code indicates a success or not.

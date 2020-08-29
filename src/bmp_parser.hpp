@@ -1,12 +1,12 @@
-#ifndef BMP_PARSER_H
-#define BMP_PARSER_H
+#pragma once
+
 #include <fstream>
 #include <iostream>
 #include <stdint.h>
 #include <vector>
 #include <memory>
 
-#include "MatrixClass.hpp"
+#include "matrix_class.hpp"
 
 
 using std::vector;
@@ -43,16 +43,18 @@ struct BMPInfoHeader {
 #pragma pack(push, 1)
 // BMPColorPalette is only used for 8 bits per pixels bmp files
 struct BMPColorPalette {
-  Matrix *color_list = nullptr; // The list of colors for the image
-  Matrix *pixel_color_indexes =
-      nullptr; // Each pixel's color's index according to the color list
+  std::unique_ptr<Matrix> color_list = nullptr; // The list of colors for the image
+  std::unique_ptr<Matrix> pixel_color_indexes = nullptr; // Each pixel's color's index according to the color list
 };
 #pragma pack(pop)
 struct BMP {
   BMPFileHeader file_header;
   BMPInfoHeader bmp_info_header;
   BMPColorPalette bmp_color_palette;
-  Matrix *pixels = nullptr;
+
+  //Matrix "pixels" has the same height and thrice the width of the image
+  //The bgr values of pixel (i,j) are stored in pixels(i, 3j), pixels(i, 3j+1), pixels(i, 3j+2)
+  std::unique_ptr<Matrix> pixels = nullptr;
 
 public:
   BMP(const std::string fname);
@@ -66,14 +68,13 @@ public:
 
 private:
   void init(const BMP& other);
-  Matrix* vector_to_matrix(vector<uint8_t> vector, int height, int width);
-  vector<uint8_t> matrix_to_vector(Matrix* matrix);
+  uint32_t padding_to(uint32_t num, uint32_t align);
+  std::unique_ptr<Matrix> vector_to_matrix(vector<uint8_t> vector, int height, int width);
+  vector<uint8_t> matrix_to_vector(std::unique_ptr<Matrix> & matrix);
   void write_headers(std::ofstream &of);
   void write_headers_and_data(std::ofstream &of, vector<uint8_t> data);
-  uint32_t make_stride_aligned(uint32_t align_stride);
-  void write_24_bit(std::ofstream &of, vector<uint8_t> data);
-  void write_8_bit(std::ofstream &of);
   void read_24_bit(std::ifstream *inp, vector<uint8_t> data);
   void read_8_bit(std::ifstream *inp);
+  void write_24_bit(std::ofstream &of, vector<uint8_t> data);
+  void write_8_bit(std::ofstream &of);
 };
-#endif

@@ -1,10 +1,7 @@
 #include "cache_manager.hpp"
 
-#include <string.h>
 #include <fstream>
-#include <memory>
 #include <iostream>
-#include <stdlib.h>
 #include <dirent.h>
 
 #define CACHE_PREFIX_LENGTH 6
@@ -17,31 +14,40 @@ Cache&Cache:: operator=(const Cache & other) {
     return *this;
 }
 
-void Cache::store(std::string filepath) {
-    std::string cache_filepath("cache/" + filepath);
-    std::ifstream ifs(filepath, std::ios::binary);
-    std::ofstream ofs(cache_filepath, std::ios::binary);
-    if (!ifs || !ofs) {
-        throw std::runtime_error("Unable to store file in cache");
-    }
-    ofs << ifs.rdbuf();
-}
-
-void Cache::search(std::string filepath) {
+bool Cache::is_file_in_cache(std::string filepath) {
     DIR *dir;
     struct dirent *ent;
     if ((dir = opendir("cache")) != NULL) {
         while ((ent = readdir(dir)) != NULL) {
             if (filepath.compare(ent->d_name) == 0) {
-                std::cout << "result found in cache" << std::endl;
                 closedir (dir);
-                return;
+                return true;
             }
         }
-        std::cout << "result not found in cache" << std::endl;
         closedir (dir);
+        return false;
     } else {
         throw std::runtime_error("Unable to open cache");
+    }
+}
+
+void Cache::store(std::string filepath) {
+    if (!is_file_in_cache(filepath)) {
+        std::string cache_filepath("cache/" + filepath);
+        std::ifstream ifs(filepath, std::ios::binary);
+        std::ofstream ofs(cache_filepath, std::ios::binary);
+        if (!ifs || !ofs) {
+            throw std::runtime_error("Unable to store file in cache");
+        }
+        ofs << ifs.rdbuf();
+    }
+}
+
+void Cache::search(std::string filepath) {
+    if (is_file_in_cache(filepath)) {
+        std::cout << "result found in cache" << std::endl;
+    } else {
+        std::cout << "result not found in cache" << std::endl;
     }
 }
 
@@ -61,13 +67,3 @@ void Cache::clear() {
 }
 
 Cache::~Cache(){}
-
-
-int main() {
-    auto cache = std::make_unique<Cache>();
-    char* filepath = static_cast<char*>(malloc(11));
-    strcpy(filepath, "matrix3.txt");
-    //cache->store(filepath);
-    //cache->search(filepath);
-    cache->clear();
-}

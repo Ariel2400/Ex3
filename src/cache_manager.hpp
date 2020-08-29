@@ -1,8 +1,8 @@
-#include <vector>
-#include <time.h>
 #include <string>
 
 class Cache {
+    private:
+        bool is_file_in_cache(std::string filepath);
     public:
         Cache();
         Cache(const Cache& other);
