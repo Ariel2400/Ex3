@@ -4,6 +4,6 @@
 
 class ImageEditor {
     public:
-        static void rotate(const std::string imagePath, const std::string outputPath);
-        static void convert_to_grayscale(const std::string imagePath, const std::string outputPath);
+        static void rotate(const std::string image_path, const std::string output_path);
+        static void convert_to_grayscale(const std::string image_path, const std::string output_path);
 };
