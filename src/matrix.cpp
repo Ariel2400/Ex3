@@ -6,7 +6,7 @@
 struct Matrix {
     uint32_t* height;
     uint32_t* width;
-    double** array;
+    double* array;
 };
 
 ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width) {
@@ -30,13 +30,14 @@ ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width) {
         return ERROR_FAILED_MEMORY_ALLOCATION;
     }
     *(newMatrixPointer->width) = width;
-    newMatrixPointer->array = (double**)malloc(height * sizeof(double*));
+    newMatrixPointer->array = (double*)malloc(height * width * sizeof(double));
     if (newMatrixPointer->array == NULL) {
         free(newMatrixPointer->height);
         free(newMatrixPointer->width);
         free(newMatrixPointer);
         return ERROR_FAILED_MEMORY_ALLOCATION;
     }
+    /*
     for (uint32_t i = 0; i < height; i++) {
         newMatrixPointer->array[i] = (double*)malloc(width * sizeof(double));
         if (newMatrixPointer->array[i] == NULL) {
@@ -50,6 +51,7 @@ ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width) {
             return ERROR_FAILED_MEMORY_ALLOCATION;
         }
     }
+    */
     *matrix = newMatrixPointer;
     return ERROR_SUCCESS;
 }
@@ -88,9 +90,11 @@ ErrorCode matrix_copy(PMatrix* result, CPMatrix source){
 
 void matrix_destroy(PMatrix matrix) {
     if (matrix != NULL) {
+        /*
         for (uint32_t i = 0; i < *(matrix->height); i++) {
             free(matrix->array[i]);
         }
+        */
         free(matrix->array);
         free(matrix->height);
         free(matrix->width);
@@ -134,10 +138,9 @@ ErrorCode matrix_setValue(PMatrix matrix, uint32_t rowIndex, uint32_t colIndex,
     if (matrix->array == NULL) {
         return ERROR_NULL_OUTPUT_POINTER;
     }
-    if (matrix->array[rowIndex] == NULL) {
-        return ERROR_NULL_OUTPUT_POINTER;
-    }
-    matrix->array[rowIndex][colIndex] = value;
+    uint32_t width;
+    matrix_getWidth(matrix, &width);
+    matrix->array[rowIndex * width + colIndex] = value;
     return ERROR_SUCCESS;
 }
 
@@ -149,13 +152,12 @@ ErrorCode matrix_getValue(CPMatrix matrix, uint32_t rowIndex, uint32_t colIndex,
     if (matrix->array == NULL) {
         return ERROR_MISSING_MATRIX_VALUES;
     }
-    if (matrix->array[rowIndex] == NULL) {
-        return ERROR_MISSING_MATRIX_VALUES;
-    }
     if (value == NULL) {
         return ERROR_NULL_OUTPUT_POINTER;
     }
-    *value = matrix->array[rowIndex][colIndex];
+    uint32_t width;
+    matrix_getWidth(matrix, &width);
+    *value = matrix->array[rowIndex * width + colIndex];
     return ERROR_SUCCESS;
 }
 
