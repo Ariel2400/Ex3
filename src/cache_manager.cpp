@@ -4,14 +4,6 @@
 #include <iostream>
 #include <dirent.h>
 
-Cache::Cache() {}
-
-Cache::Cache(const Cache& other) {}
-
-Cache& Cache::operator=(const Cache & other) {
-    return *this;
-}
-
 bool Cache::is_file_in_cache(const std::string file_name_in_cache) {
     DIR *dir;
     struct dirent *ent;
@@ -93,5 +85,3 @@ void Cache::clear() {
         std::cerr << "Unable to open cache" << std::endl;
     }
 }
-
-Cache::~Cache(){}

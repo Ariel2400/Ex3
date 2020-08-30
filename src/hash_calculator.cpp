@@ -6,6 +6,7 @@ uint32_t HashCalculator::encode(std::string path) {
   std::ifstream file{path, std::ios::in};
   if (!file) {
     std::cerr << "can't open file!" << std::endl;
+    return 0;
   } else {
     std::string buffer((std::istreambuf_iterator<char>(file)),
                        (std::istreambuf_iterator<char>()));
@@ -16,12 +17,13 @@ uint32_t HashCalculator::encode(std::string path) {
     return remainder;
   }
 }
+
 void HashCalculator::write(std::string path, uint32_t remainder) {
   std::ofstream file{path};
   if (!file) {
     std::cerr << "can't open this file to write!" << std::endl;
   } else {
-    file << (char *)remainder << std::endl;
+    file << std::to_string(remainder) << std::endl;
     file.close();
   }
 }
