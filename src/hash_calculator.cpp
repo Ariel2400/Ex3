@@ -1,4 +1,4 @@
-#include "hash.hpp"
+#include "hash_calculator.hpp"
 
 void hash::read(std::string path) {
   std::ifstream file{path, std::ios::in};
