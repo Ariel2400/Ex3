@@ -4,7 +4,7 @@
 #include "action_manager.hpp"
 //#include "matrix_calculator.hpp"
 #include "image_editor.hpp"
-//#include "hash_calculator.hpp"
+#include "hash_calculator.hpp"
 #include "cache_manager.hpp"
 
 void ActionManager::matrix_add(vector<std::string> args){
@@ -108,12 +108,12 @@ void ActionManager::hash_crc32(vector<std::string> args){
             }
         } else {
             if (args[1].compare("stdout") == 0) {
-                //HashCalculator::crc32(args[0], "temp.txt");
+                HashCalculator::crc32(args[0], "temp.txt");
                 Cache::store_into("temp.txt", file_name);
                 Cache::print(file_name);
                 remove("temp.txt");
             } else {
-                //HashCalculator::crc32(args[0], args[1]);
+                HashCalculator::crc32(args[0], args[1]);
                 Cache::store_into(args[1], file_name);
             }
         }
