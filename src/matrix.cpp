@@ -1,8 +1,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-#include "Matrix.hpp"
-#include "ErrorCode.hpp"
+#include "matrix.hpp"
 
 struct Matrix {
     uint32_t* height;
