@@ -25,13 +25,76 @@ bool MatrixCalculator::is_matrix(std::string path) {
       }
     }
   }
+  file.close();
   return true;
 }
 
-Matrix MatrixCalculator::parse_matrix(std::string path){
-    if(!is_matrix(path)){
-        std::cerr << "Matrix is invalid, exiting..." << std::endl;
-        return;
+Matrix MatrixCalculator::to_matrix(std::string path) {
+  if (!is_matrix(path)) {
+    std::cerr << "Matrix is invalid, exiting..." << std::endl;
+    return;
+  }
+  std::ifstream file{path};
+  std::string line;
+  int height, width = 0;
+  while (std::getline(file, line)) {
+    if (width == 0) {
+      for (char &c : line) {
+        if (c == ',') {
+          width++;
+        }
+      }
+      width++;
     }
-    auto matrix = std::make_unique<Matrix>();
+    height++;
+  }
+  auto matrix = std::make_unique<Matrix>(width, height);
+  std::regex space("/s+");
+  auto current_line = 0;
+  while (std::getline(file, line)) {
+    auto line_for_parse = std::regex_replace(line, space, "");
+    std::vector<std::string> nums;
+    std::stringstream check(line_for_parse);
+    std::string num;
+    while (getline(check, num, ',')) {
+      nums.push_back(num);
+    }
+    auto j = 0;
+    for(auto &num:nums){
+      matrix->set_value(current_line, j, stod(num));
+      j++;
+    }
+    current_line++;
+  }
+  file.close();
+  return *matrix;
+}
+
+void MatrixCalculator::to_file(Matrix matrix, std::string path){
+  auto height = matrix.get_height(), width = matrix.get_width();
+  std::ofstream file{path};
+  for(int i = 0; i < height; ++i){
+    for(int j = 0; j < width; ++j){
+      if(j==width-1){
+        file << std::to_string(matrix.get_value(i, j));
+      }
+      else {
+        file << std::to_string(matrix.get_value(i, j)) + ", ";
+      }
+    }
+    file << std::endl;
+  }
+  file.close();
+}
+void MatrixCalculator::add(std::string path1, std::string path2, std::string output){
+  auto matrix1 = to_matrix(path1);
+  auto matrix2 = to_matrix(path2);
+  matrix1.add_matrix(matrix2);
+  to_file(matrix1, output);
+}
+void MatrixCalculator::add(std::string path1, std::string path2, std::string output){
+  auto matrix1 = to_matrix(path1);
+  auto matrix2 = to_matrix(path2);
+  matrix1.multiply_by_matrix(matrix2);
+  to_file(matrix1, output);
 }
