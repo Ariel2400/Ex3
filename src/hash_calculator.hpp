@@ -1,7 +1,9 @@
-#include "crc32.h"
 #include <fstream>
 #include <string>
 #include <iostream>
+
+#include "crc32.h"
+
 struct HashCalculator {
   private:
   static uint32_t encode(std::string path);
