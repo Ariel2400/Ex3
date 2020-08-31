@@ -1,6 +1,5 @@
 #include "matrix_calculator.hpp"
-// checks if a file has a legal matrix(numbers with comma seperators, same
-// number of numbers in each line)
+
 bool MatrixCalculator::is_matrix(std::string path) {
   std::ifstream file{path};
   uint32_t row_size = -1; // flag value -1
@@ -13,7 +12,7 @@ bool MatrixCalculator::is_matrix(std::string path) {
       file.close();
     } else {
       uint32_t counter = 0;
-      for (char &c : line) { //
+      for (char &c : line) { //number of commas + 1 = number of numbers
         if (c == ',') {
           counter++;
         }
@@ -30,7 +29,7 @@ bool MatrixCalculator::is_matrix(std::string path) {
   file.close();
   return true;
 }
-// read file to a matrix object
+
 Matrix MatrixCalculator::to_matrix(std::string path) {
   if (!is_matrix(path)) {
     std::cerr << "Matrix is invalid, exiting..." << std::endl;
@@ -39,7 +38,7 @@ Matrix MatrixCalculator::to_matrix(std::string path) {
   std::ifstream file{path};
   std::string line;
   int height, width = 0;
-  while (std::getline(file, line)) {
+  while (std::getline(file, line)) { //get the width and height
     if (width == 0) {
       for (char &c : line) {
         if (c == ',') {
@@ -72,7 +71,7 @@ Matrix MatrixCalculator::to_matrix(std::string path) {
   file.close();
   return *matrix;
 }
-// write matrix object to file
+
 void MatrixCalculator::to_file(Matrix matrix, std::string path) {
   auto height = matrix.get_height(), width = matrix.get_width();
   std::ofstream file{path};
@@ -88,8 +87,7 @@ void MatrixCalculator::to_file(Matrix matrix, std::string path) {
   }
   file.close();
 }
-//take two file, each describes a matrix and adds them if possible
-//and writes the result in an output file
+
 void MatrixCalculator::add(std::string path1, std::string path2,
                            std::string output) {
   auto matrix1 = to_matrix(path1);
@@ -97,8 +95,7 @@ void MatrixCalculator::add(std::string path1, std::string path2,
   matrix1.add_matrix(matrix2);
   to_file(matrix1, output);
 }
-//take two file, each describes a matrix and nultyplies them if possible
-//and writes the result in an output file
+
 void MatrixCalculator::multiply(std::string path1, std::string path2,
                            std::string output) {
   auto matrix1 = to_matrix(path1);
