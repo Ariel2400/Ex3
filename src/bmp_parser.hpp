@@ -57,24 +57,42 @@ struct BMP {
   std::unique_ptr<Matrix> pixels = nullptr;
 
 public:
+  //builder from file
   BMP(const std::string fname);
+  //copy-builder
   BMP(const BMP& other);
+  //requiered operator for copy-builder
   BMP& operator=(const BMP& other);
+  //read file to bmp object
   void read(const std::string fname);
+  //write bmp object to file
   void write(const std::string fname);
+  //converts the image to gray scale
   void convert_to_grayscale();
+  //rotates the image by 90 degrees
   void rotate_image();
+  //destructor
   ~BMP();
 
 private:
+  //copy constructor
   void init(const BMP& other);
+  //adjusts the padding to satisfy the bmp format
   uint32_t padding_to(uint32_t num, uint32_t align) const;
+  //converts vector to matrix
   std::unique_ptr<Matrix> vector_to_matrix(vector<uint8_t> vector, int height, int width) const;
+  //converts matrix to vector
   vector<uint8_t> matrix_to_vector(std::unique_ptr<Matrix> & matrix);
+  //write the header
   void write_headers(std::ofstream &of) const;
+  //write the header and data
   void write_headers_and_data(std::ofstream &of, vector<uint8_t> data) const;
+  //read the file, given it's in 24 bit per pixel
   void read_24_bit(std::ifstream *inp, vector<uint8_t> data);
+  //read the file, given it's in 8 bit per pixel
   void read_8_bit(std::ifstream *inp);
+  //write the file, given it's in 24 bit per pixel
   void write_24_bit(std::ofstream &of, vector<uint8_t> data) const;
+  //read the file, given it's in 24 bit per pixel
   void write_8_bit(std::ofstream &of);
 };
