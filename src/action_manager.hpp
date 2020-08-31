@@ -11,6 +11,8 @@ struct action {
 
 class ActionManager {
     private:
+        //proccesses the actions and sends them to matching parts in the other files
+        
         static void matrix_add(vector<std::string> args);
         static void matrix_multiply(vector<std::string> args);
         static void image_rotate(vector<std::string> args);
@@ -19,5 +21,6 @@ class ActionManager {
         static void cache_clear();
         static void cache_search(vector<std::string> args);
     public:
+        //takes an action struct and preforms the matching actio
         static void perform_action(struct action action);
 };
