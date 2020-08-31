@@ -14,7 +14,6 @@
 #define BITS_IN_A_BYTE 8
 
 using std::vector;
-//class Matrix;
 
 void BMP::init(const BMP& other) {
   file_header.file_type = other.file_header.file_type;
@@ -38,9 +37,7 @@ void BMP::init(const BMP& other) {
   pixels = std::make_unique<Matrix>(*other.pixels);
 }
 
-BMP::BMP(const std::string fname) { 
-  read(fname); 
-}
+BMP::BMP() {}
 
 BMP::BMP(const BMP& other) {
   init(other);
@@ -53,7 +50,7 @@ BMP& BMP::operator=(const BMP& other) {
   return *this;
 }
 
-void BMP::read(const std::string fname) {
+bool BMP::read(const std::string fname) {
   vector<uint8_t> data;
   std::ifstream inp{fname, std::ios_base::binary};
   if (inp) {
@@ -61,6 +58,7 @@ void BMP::read(const std::string fname) {
     inp.read((char *)&file_header, sizeof(file_header));
     if (file_header.file_type != BMP_DECLARATION) {
       std::cerr << "Error! Unrecognized file format." << std::endl;
+      return false;
     }
     inp.seekg(FILE_INFO_END, inp.beg);
     inp.read((char *)&bmp_info_header, sizeof(bmp_info_header));
@@ -73,13 +71,17 @@ void BMP::read(const std::string fname) {
 
     if (bmp_info_header.bit_count == 24) {
       read_24_bit(&inp, data);
+      return true;
     } else if (bmp_info_header.bit_count == 8) {
       read_8_bit(&inp);
+      return true;
     } else {
       std::cerr << "The program can treat only 24 or 8 bits per pixel BMP files" << std::endl;
+      return false;
     }
   } else {
     std::cerr << "Unable to open the input image file." << std::endl;
+    return false;
   }
 }
 

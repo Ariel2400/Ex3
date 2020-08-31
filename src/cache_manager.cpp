@@ -62,7 +62,6 @@ void Cache::print(const std::string file_name_in_cache) {
         std::ifstream ifs(cache_path);
         if (ifs.is_open()) {
             std::cout << ifs.rdbuf();
-            std::cout << std::endl;
         } else {
             std::cerr << "Unable to open file" << std::endl;
         }      

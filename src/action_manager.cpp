@@ -2,10 +2,24 @@
 #include <algorithm>
 
 #include "action_manager.hpp"
-//#include "matrix_calculator.hpp"
+#include "matrix_calculator.hpp"
 #include "image_editor.hpp"
 #include "hash_calculator.hpp"
 #include "cache_manager.hpp"
+
+bool ActionManager::is_a_text_file(const std::string file_name)
+{
+    std::string suffix(".txt");
+    return file_name.size() >= suffix.size() &&
+           file_name.compare(file_name.size() - suffix.size(), file_name.size(), suffix) == 0;
+}
+
+bool ActionManager::is_a_bmp_file(const std::string file_name)
+{
+    std::string suffix(".bmp");
+    return file_name.size() >= suffix.size() &&
+           file_name.compare(file_name.size() - suffix.size(), file_name.size(), suffix) == 0;
+}
 
 void ActionManager::matrix_add(vector<std::string> args){
     if (args.size() != 3) {
@@ -17,18 +31,24 @@ void ActionManager::matrix_add(vector<std::string> args){
         if (Cache::is_file_in_cache(file_name)) {
             if (args[2].compare("stdout") == 0) {
                 Cache::print(file_name);
-            } else {
+            } else if (is_a_text_file(args[2])) {
                 Cache::load_from(file_name, args[2]);
+            } else {
+               std::cerr << args[2] << " is not a text file" << std::endl; 
             }
         } else {
             if (args[2].compare("stdout") == 0) {
-                //MatrixCalculator::add(args[0], args[1], "temp.txt");
-                Cache::store_into("temp.txt", file_name);
-                Cache::print(file_name);
-                remove("temp.txt");
+                if(MatrixCalculator::add(args[0], args[1], "temp.txt")) {
+                    Cache::store_into("temp.txt", file_name);
+                    Cache::print(file_name);
+                    remove("temp.txt");
+                }
+            } else if (is_a_text_file(args[2])) {
+                if(MatrixCalculator::add(args[0], args[1], args[2])) {
+                    Cache::store_into(args[2], file_name);
+                }
             } else {
-                //MatrixCalculator::add(args[0], args[1], args[2]);
-                Cache::store_into(args[2], file_name);
+                std::cerr << args[2] << " is not a text file" << std::endl;
             }
         }
     }
@@ -44,18 +64,24 @@ void ActionManager::matrix_multiply(vector<std::string> args){
         if (Cache::is_file_in_cache(file_name)) {
             if (args[2].compare("stdout") == 0) {
                 Cache::print(file_name);
-            } else {
+            } else if (is_a_text_file(args[2])) {
                 Cache::load_from(file_name, args[2]);
+            } else {
+                std::cerr << args[2] << " is not a text file" << std::endl;
             }
         } else {
             if (args[2].compare("stdout") == 0) {
-                //MatrixCalculator::multiply(args[0], args[1], "temp.txt");
-                Cache::store_into("temp.txt", file_name);
-                Cache::print(file_name);
-                remove("temp.txt");
+                if (MatrixCalculator::multiply(args[0], args[1], "temp.txt")) {
+                    Cache::store_into("temp.txt", file_name);
+                    Cache::print(file_name);
+                    remove("temp.txt");
+                }
+            } else if (is_a_text_file(args[2])) {
+                if (MatrixCalculator::multiply(args[0], args[1], args[2])) {
+                    Cache::store_into(args[2], file_name);
+                }
             } else {
-                //MatrixCalculator::multiply(args[0], args[1], args[2]);
-                Cache::store_into(args[2], file_name);
+                std::cerr << args[2] << " is not a text file" << std::endl;
             }
         }
     }
@@ -64,32 +90,54 @@ void ActionManager::matrix_multiply(vector<std::string> args){
 void ActionManager::image_rotate(vector<std::string> args){
     if (args.size() != 2) {
         std::cerr << "Invalid number of image rotate arguments, expected 2" << std::endl;
-    } else {
+    } else if (is_a_bmp_file(args[1])) {
         std::string file_name("image_rotate_" + args[0]);
         std::replace(file_name.begin(), file_name.end(), '.', '_');
         file_name += ".bmp";
         if (Cache::is_file_in_cache(file_name)) {
-            Cache::load_from(file_name, args[1]);
+            if (is_a_bmp_file(args[1])) {
+                Cache::load_from(file_name, args[1]);
+            } else {
+                std::cerr << args[1] << " is not a bmp file" << std::endl;
+            }
         } else {
-            ImageEditor::rotate(args[0], args[1]);
-            Cache::store_into(args[1], file_name);
+            if (is_a_bmp_file(args[1])) {
+                if(ImageEditor::rotate(args[0], args[1])) {
+                    Cache::store_into(args[1], file_name);
+                }
+            } else {
+                std::cerr << args[1] << " is not a bmp file" << std::endl;
+            }
         }
+    } else {
+        std::cerr << args[1] << " is not a bmp file" << std::endl;
     }
 }
 
 void ActionManager::image_convert(vector<std::string> args){
     if (args.size() != 2) {
         std::cerr << "Invalid number of image convert arguments, expected 2" << std::endl;
-    } else {
+    } else if (is_a_bmp_file(args[1])) {
         std::string file_name("image_convert_" + args[0]);
         std::replace(file_name.begin(), file_name.end(), '.', '_');
         file_name += ".bmp";
         if (Cache::is_file_in_cache(file_name)) {
-            Cache::load_from(file_name, args[1]);
+            if (is_a_bmp_file(args[1])) {
+                Cache::load_from(file_name, args[1]);
+            } else {
+                std::cerr << args[1] << " is not a bmp file" << std::endl;
+            }
         } else {
-            ImageEditor::convert_to_grayscale(args[0], args[1]);
-            Cache::store_into(args[1], file_name);
+            if (is_a_bmp_file(args[1])) {
+                if (ImageEditor::convert_to_grayscale(args[0], args[1])) {
+                    Cache::store_into(args[1], file_name);
+                }
+            } else {
+                std::cerr << args[1] << " is not a bmp file" << std::endl;
+            }
         }
+    } else {
+        std::cerr << args[1] << " is not a bmp file" << std::endl;
     }
 }
 
@@ -103,25 +151,35 @@ void ActionManager::hash_crc32(vector<std::string> args){
         if (Cache::is_file_in_cache(file_name)) {
             if (args[1].compare("stdout") == 0) {
                 Cache::print(file_name);
-            } else {
+            } else if (is_a_text_file(args[1])) {
                 Cache::load_from(file_name, args[1]);
+            } else {
+                std::cerr << args[1] << " is not a text file" << std::endl;
             }
         } else {
             if (args[1].compare("stdout") == 0) {
-                HashCalculator::crc32(args[0], "temp.txt");
-                Cache::store_into("temp.txt", file_name);
-                Cache::print(file_name);
-                remove("temp.txt");
+                if (HashCalculator::crc32(args[0], "temp.txt")) {
+                    Cache::store_into("temp.txt", file_name);
+                    Cache::print(file_name);
+                    remove("temp.txt");
+                }
+            } else if (is_a_text_file(args[1])) {
+                if (HashCalculator::crc32(args[0], args[1])) {
+                    Cache::store_into(args[1], file_name);
+                }    
             } else {
-                HashCalculator::crc32(args[0], args[1]);
-                Cache::store_into(args[1], file_name);
+                std::cerr << args[1] << " is not a text file" << std::endl;
             }
         }
     }
 }
 
-void ActionManager::cache_clear(){
-    Cache::clear();
+void ActionManager::cache_clear(vector<std::string> args){
+    if (args.size() != 0) {
+        std::cerr << "cache clear command requires no arguments" << std::endl;
+    } else {
+        Cache::clear();
+    }
 }
 
 void ActionManager::cache_search(vector<std::string> args){
@@ -134,7 +192,7 @@ void ActionManager::cache_search(vector<std::string> args){
             file_name += args[i];
         }
         std::replace(file_name.begin(), file_name.end(), '.', '_');
-        if (args[0].compare("matrix") == 0 || args[0].compare("hash") == 0) {
+        if (args[0].compare("matrix") == 0 || args[0].compare("crc32") == 0) {
             file_name += ".txt";
         } else if (args[0].compare("image") == 0) {
             file_name += ".bmp";
@@ -169,7 +227,7 @@ void ActionManager::perform_action(struct action action) {
         }
     } else if (action.department.compare("cache") == 0) {
         if (action.command.compare("clear") == 0) {
-            cache_clear();
+            cache_clear(action.args);
         } else if (action.command.compare("search") == 0) {
             cache_search(action.args);
         } else {

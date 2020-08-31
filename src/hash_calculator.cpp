@@ -2,32 +2,41 @@
 
 #include "hash_calculator.hpp"
 
-uint32_t HashCalculator::encode(std::string path) {
+bool HashCalculator::encode(std::string path, uint32_t* remainder) {
   std::ifstream file{path, std::ios::in};
   if (!file) {
-    std::cerr << "can't open file!" << std::endl;
-    return 0;
+    std::cerr << "Can't open file" << path << std::endl;
+    return false;
   } else {
     std::string buffer((std::istreambuf_iterator<char>(file)),
                        (std::istreambuf_iterator<char>()));
     const unsigned char *c_buffer =
         reinterpret_cast<const unsigned char *>(buffer.c_str());
-    uint32_t remainder = calculate_crc32c(0, c_buffer, buffer.length());
+    *remainder = calculate_crc32c(0, c_buffer, buffer.length());
     file.close();
-    return remainder;
+    return true;
   }
 }
 
-void HashCalculator::write(std::string path, uint32_t remainder) {
+bool HashCalculator::write(std::string path, uint32_t remainder) {
   std::ofstream file{path};
   if (!file) {
-    std::cerr << "can't open this file to write!" << std::endl;
+    std::cerr << "Can't write into file " << path << std::endl;
+    return false;
   } else {
     file << std::to_string(remainder) << std::endl;
     file.close();
+    return true;
   }
 }
 
-void HashCalculator::crc32(std::string input, std::string output){
-  write(output, encode(input));
+bool HashCalculator::crc32(std::string input, std::string output){
+  uint32_t remainder;
+  if (!encode(input, &remainder)) {
+    return false;
+  }
+  if (!write(output, remainder)) {
+    return false;
+  }
+  return true;
 }
