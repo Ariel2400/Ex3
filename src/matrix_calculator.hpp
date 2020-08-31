@@ -9,10 +9,10 @@ struct MatrixCalculator{
     public:
     /*take two file, each describes a matrix and adds them if possible
     and writes the result in an output file*/
-    static void add(std::string path1, std::string path2, std::string output);
+    static bool add(std::string path1, std::string path2, std::string output);
     /*take two file, each describes a matrix and nultyplies them if possible
     and writes the result in an output file*/
-    static void multiply(std::string path1, std::string path2, std::string output);
+    static bool multiply(std::string path1, std::string path2, std::string output);
     private:
     /* checks if a file has a legal matrix(numbers with comma seperators, same
     number of numbers in each line)*/
