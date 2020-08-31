@@ -2,7 +2,11 @@
 // checks if a file has a legal matrix(numbers with comma seperators, same
 // number of numbers in each line)
 bool MatrixCalculator::is_matrix(std::string path) {
+  std::cout << path << std::endl;
   std::ifstream file{path};
+  if (!file) {
+    return false;
+  }
   uint32_t row_size = -1; // flag value -1
   std::string line;
   std::regex line_format{
@@ -30,11 +34,14 @@ bool MatrixCalculator::is_matrix(std::string path) {
   file.close();
   return true;
 }
+
 // read file to a matrix object
 Matrix MatrixCalculator::to_matrix(std::string path) {
   if (!is_matrix(path)) {
     std::cerr << "Matrix is invalid, exiting..." << std::endl;
-    return;
+    // return garbage matrix
+    Matrix matrix(1, 1);
+    return matrix;
   }
   std::ifstream file{path};
   std::string line;
@@ -72,6 +79,7 @@ Matrix MatrixCalculator::to_matrix(std::string path) {
   file.close();
   return *matrix;
 }
+
 // write matrix object to file
 void MatrixCalculator::to_file(Matrix matrix, std::string path) {
   auto height = matrix.get_height(), width = matrix.get_width();
@@ -88,21 +96,38 @@ void MatrixCalculator::to_file(Matrix matrix, std::string path) {
   }
   file.close();
 }
+
 //take two file, each describes a matrix and adds them if possible
 //and writes the result in an output file
-void MatrixCalculator::add(std::string path1, std::string path2,
+// return true if both files do describe a matric and false if not
+bool MatrixCalculator::add(std::string path1, std::string path2,
                            std::string output) {
-  auto matrix1 = to_matrix(path1);
-  auto matrix2 = to_matrix(path2);
-  matrix1.add_matrix(matrix2);
-  to_file(matrix1, output);
+  //std::cout << path1 << " " << path2 << std::endl;
+  if (!is_matrix(path1) || !is_matrix(path2)) {
+    std::cerr << "Either " << path1 << " or " << path2 << " is not a valid matrix file" << std::endl;
+    return false;
+  } else {
+    auto matrix1 = to_matrix(path1);
+    auto matrix2 = to_matrix(path2);
+    matrix1.add_matrix(matrix2);
+    to_file(matrix1, output);
+    return true;
+  }
 }
-//take two file, each describes a matrix and nultyplies them if possible
-//and writes the result in an output file
-void MatrixCalculator::multiply(std::string path1, std::string path2,
+
+// take two file, each describes a matrix and nultyplies them if possible
+// and writes the result in an output file.
+// return true if both files do describe a matric and false if not
+bool MatrixCalculator::multiply(std::string path1, std::string path2,
                            std::string output) {
-  auto matrix1 = to_matrix(path1);
-  auto matrix2 = to_matrix(path2);
-  matrix1.multiply_by_matrix(matrix2);
-  to_file(matrix1, output);
+  if (!is_matrix(path1) || !is_matrix(path2)) {
+    std::cerr << "Either " << path1 << " or " << path2 << " is not a valid matrix file" << std::endl;
+    return false;
+  } else {
+    auto matrix1 = to_matrix(path1);
+    auto matrix2 = to_matrix(path2);
+    matrix1.multiply_by_matrix(matrix2);
+    to_file(matrix1, output);
+    return true;
+  }
 }
