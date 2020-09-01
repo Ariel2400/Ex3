@@ -18,7 +18,7 @@ bool MatrixCalculator::is_matrix(std::string path) {
       uint32_t counter = 0;
       for (char &c : line) { //number of commas + 1 = number of numbers
         if (c == ',') {
-          counter++;
+          ++counter;
         }
       }
       counter++;
@@ -48,12 +48,12 @@ Matrix MatrixCalculator::to_matrix(std::string path) {
     if (width == 0) {
       for (char &c : line) {
         if (c == ',') {
-          width++;
+          ++width;
         }
       }
-      width++;
+      ++width;
     }
-    height++;
+    ++height;
   }
   auto matrix = std::make_unique<Matrix>(width, height);
   std::regex space("/s+"); // how spaces look in regex
@@ -70,9 +70,9 @@ Matrix MatrixCalculator::to_matrix(std::string path) {
     auto j = 0;
     for (auto &num : nums) {
       matrix->set_value(current_line, j, stod(num));
-      j++;
+      ++j;
     }
-    current_line++;
+    ++current_line;
   }
   file.close();
   return *matrix;
