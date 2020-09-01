@@ -5,15 +5,15 @@
 #include <string>
 
 typedef enum {
-    // DON'T CHANGE THIS VALUE!
-    ERROR_SUCCESS = 0,
-    ERROR_MISSING_MATRIX = 1,
-    ERROR_MISSING_MATRIX_HEIGHT = 2,
-    ERROR_MISSING_MATRIX_WIDTH = 3,
-    ERROR_MISSING_MATRIX_VALUES = 4,
-    ERROR_NULL_OUTPUT_POINTER = 5,
-    ERROR_INVALID_MATRIX_SIZES = 6,
-    ERROR_FAILED_MEMORY_ALLOCATION = 7,
+  // DON'T CHANGE THIS VALUE!
+  ERROR_SUCCESS = 0,
+  ERROR_MISSING_MATRIX = 1,
+  ERROR_MISSING_MATRIX_HEIGHT = 2,
+  ERROR_MISSING_MATRIX_WIDTH = 3,
+  ERROR_MISSING_MATRIX_VALUES = 4,
+  ERROR_NULL_OUTPUT_POINTER = 5,
+  ERROR_INVALID_MATRIX_SIZES = 6,
+  ERROR_FAILED_MEMORY_ALLOCATION = 7,
 } ErrorCode;
 
 /**
@@ -31,4 +31,3 @@ bool error_isSuccess(ErrorCode code);
  * @return const char* the textual representation of the error code.
  */
 const std::string error_getErrorMessage(ErrorCode code);
-

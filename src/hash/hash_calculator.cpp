@@ -2,8 +2,8 @@
 
 #include "hash_calculator.hpp"
 
-bool HashCalculator::encode(std::string path, uint32_t* remainder) {
-  std::ifstream file{path, std::ios::in};
+bool HashCalculator::encode(std::string path, uint32_t *remainder) {
+  std::ifstream file{path, std::ios::binary};
   if (!file) {
     std::cerr << "Can't open file" << path << std::endl;
     return false;
@@ -30,7 +30,7 @@ bool HashCalculator::write(std::string path, uint32_t remainder) {
   }
 }
 
-bool HashCalculator::crc32(std::string input, std::string output){
+bool HashCalculator::crc32(std::string input, std::string output) {
   uint32_t remainder;
   if (!encode(input, &remainder)) {
     return false;

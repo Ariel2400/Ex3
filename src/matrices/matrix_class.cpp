@@ -1,25 +1,25 @@
-#include <memory>
 #include <iostream>
+#include <memory>
 
 #include "matrix_class.hpp"
 
 using namespace std;
 
-Matrix::Matrix(int height, int width) { 
+Matrix::Matrix(int height, int width) {
   ErrorCode code = matrix_create(&matrix, height, width);
   if (!error_isSuccess(code)) {
     std::cerr << error_getErrorMessage(code) << std::endl;
   }
 }
 
-Matrix::Matrix(const Matrix& other) {
+Matrix::Matrix(const Matrix &other) {
   ErrorCode code = matrix_copy(&matrix, other.matrix);
   if (!error_isSuccess(code)) {
     std::cerr << error_getErrorMessage(code) << std::endl;
   }
 }
 
-Matrix & Matrix::operator=(const Matrix& other) {
+Matrix &Matrix::operator=(const Matrix &other) {
   if (this != &other) {
     matrix_destroy(matrix);
     ErrorCode code = matrix_copy(&matrix, other.matrix);
@@ -30,9 +30,7 @@ Matrix & Matrix::operator=(const Matrix& other) {
   return *this;
 }
 
-PMatrix Matrix::get_matrix() const{
-  return this->matrix;
-}
+PMatrix Matrix::get_matrix() const { return this->matrix; }
 
 int Matrix::get_height() const {
   uint32_t height;
@@ -68,7 +66,7 @@ double Matrix::get_value(int i, int j) const {
   return result;
 }
 
-void Matrix::add_matrix(Matrix matToAdd){
+void Matrix::add_matrix(Matrix matToAdd) {
   ErrorCode code = matrix_add(&matrix, matrix, matToAdd.matrix);
   if (!error_isSuccess(code)) {
     std::cerr << error_getErrorMessage(code) << std::endl;
@@ -76,12 +74,11 @@ void Matrix::add_matrix(Matrix matToAdd){
 }
 
 void Matrix::multiply_by_matrix(const Matrix matToMultiplyBy) {
-  ErrorCode code = matrix_multiplyMatrices(&matrix, matrix, matToMultiplyBy.matrix);
+  ErrorCode code =
+      matrix_multiplyMatrices(&matrix, matrix, matToMultiplyBy.matrix);
   if (!error_isSuccess(code)) {
     std::cerr << error_getErrorMessage(code) << std::endl;
   }
 }
 
-Matrix::~Matrix() { 
-  matrix_destroy(matrix); 
-}
+Matrix::~Matrix() { matrix_destroy(matrix); }
