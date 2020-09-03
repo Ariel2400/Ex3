@@ -11,8 +11,10 @@ public:
   int get_width() const;
   void set_value(int i, int j, double value);
   double get_value(int i, int j) const;
-  void add_matrix(const Matrix matToAdd);
-  void multiply_by_matrix(const Matrix matToMultiplyBy);
+  // returns true if operation was done successfully, false if not
+  bool add_matrix(const Matrix matToAdd);
+  // returns true if operation was done successfully, false if not
+  bool multiply_by_matrix(const Matrix matToMultiplyBy);
   ~Matrix();
 
 private:

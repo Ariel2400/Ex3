@@ -66,19 +66,23 @@ double Matrix::get_value(int i, int j) const {
   return result;
 }
 
-void Matrix::add_matrix(Matrix matToAdd) {
+bool Matrix::add_matrix(Matrix matToAdd) {
   ErrorCode code = matrix_add(&matrix, matrix, matToAdd.matrix);
   if (!error_isSuccess(code)) {
     std::cerr << error_getErrorMessage(code) << std::endl;
+    return false;
   }
+  return true;
 }
 
-void Matrix::multiply_by_matrix(const Matrix matToMultiplyBy) {
+bool Matrix::multiply_by_matrix(const Matrix matToMultiplyBy) {
   ErrorCode code =
       matrix_multiplyMatrices(&matrix, matrix, matToMultiplyBy.matrix);
   if (!error_isSuccess(code)) {
     std::cerr << error_getErrorMessage(code) << std::endl;
+    return false;
   }
+  return true;
 }
 
 Matrix::~Matrix() { matrix_destroy(matrix); }

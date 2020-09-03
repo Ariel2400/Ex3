@@ -1,8 +1,6 @@
-#include "matrix_class.hpp"
-#include <bits/stdc++.h>
-#include <fstream>
 #include <iostream>
-#include <regex>
+
+#include "matrix_class.hpp"
 
 struct MatrixCalculator {
 public:
