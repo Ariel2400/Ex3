@@ -1,33 +1,50 @@
+#include <bits/stdc++.h>
+#include <fstream>
+#include <regex>
+
 #include "matrix_calculator.hpp"
 
 bool MatrixCalculator::is_matrix(std::string path) {
-  std::ifstream file{path};
+  std::ifstream file(path);
   if (!file) {
     return false;
   }
   int row_size = -1; // flag value -1
   std::string line;
-  std::regex line_format{
-      "(\\ *[0-9]+\\ *,)*\\ *[0-9]+\\ *"}; // how a line should look
+  bool read_last_line = false;
+  //how a line should look
+  std::regex line_format(
+      "(\\ *[0-9]+((.[0-9]+)?)\\ *,)*\\ *[0-9]+((.[0-9]+)?)\\ *");
   while (std::getline(file, line)) {
-    if (!std::regex_search(line, line_format)) {
+    if (read_last_line) {
       file.close();
       return false;
-    } else {
-      int counter = 0;
-      for (char &c : line) { // number of commas + 1 = number of numbers
-        if (c == ',') {
-          ++counter;
-        }
-      }
-      ++counter;
-      if (row_size == -1) {
-        row_size = counter;
-      } else if (row_size != counter) {
+    }
+    if (!std::regex_match(line.substr(0, line.size() - 1), line_format)) {
+      if (std::regex_match(line, line_format)) {
+        read_last_line = true;
+      } else {
         file.close();
         return false;
       }
     }
+    int counter = 0;
+    for (char &c : line) { // number of commas + 1 = number of numbers
+      if (c == ',') {
+        ++counter;
+      }
+    }
+    ++counter;
+    if (row_size == -1) {
+      row_size = counter;
+    } else if (row_size != counter) {
+      file.close();
+      return false;
+    }
+  }
+  if (!read_last_line) {
+    file.close();
+    return false;
   }
   file.close();
   return true;
@@ -56,7 +73,7 @@ Matrix MatrixCalculator::to_matrix(std::string path) {
   }
   file.clear();
   file.seekg(0);
-  std::unique_ptr<Matrix> matrix = std::make_unique<Matrix>(width, height);
+  std::unique_ptr<Matrix> matrix = std::make_unique<Matrix>(height, width);
   std::regex space("\\ +"); // how spaces look in regex
   auto current_line = 0;
   while (std::getline(file, line)) {
@@ -106,15 +123,17 @@ bool MatrixCalculator::add(std::string file_name1, std::string file_name2,
   if (!is_matrix(file_path1)) {
     std::cerr << file_name1 << " is not a valid matrix file" << std::endl;
     return false;
-  } else if(!is_matrix(file_path2)) {
+  } else if (!is_matrix(file_path2)) {
     std::cerr << file_name2 << " is not a valid matrix file" << std::endl;
     return false;
   } else {
     auto matrix1 = to_matrix(file_path1);
     auto matrix2 = to_matrix(file_path2);
-    matrix1.add_matrix(matrix2);
-    to_file(matrix1, output_file_path);
-    return true;
+    if (matrix1.add_matrix(matrix2)) {
+      to_file(matrix1, output_file_path);
+      return true;
+    }
+    return false;
   }
 }
 
@@ -122,21 +141,23 @@ bool MatrixCalculator::add(std::string file_name1, std::string file_name2,
 // and writes the result in an output file.
 // return true if both files do describe a matric and false if not
 bool MatrixCalculator::multiply(std::string file_name1, std::string file_name2,
-                           std::string output_file_name) {
+                                std::string output_file_name) {
   std::string file_path1("../" + file_name1);
   std::string file_path2("../" + file_name2);
   std::string output_file_path("../" + output_file_name);
   if (!is_matrix(file_path1)) {
     std::cerr << file_name1 << " is not a valid matrix file" << std::endl;
     return false;
-  } else if(!is_matrix(file_path2)) {
+  } else if (!is_matrix(file_path2)) {
     std::cerr << file_name2 << " is not a valid matrix file" << std::endl;
     return false;
   } else {
     auto matrix1 = to_matrix(file_path1);
     auto matrix2 = to_matrix(file_path2);
-    matrix1.multiply_by_matrix(matrix2);
-    to_file(matrix1, output_file_path);
-    return true;
+    if (matrix1.multiply_by_matrix(matrix2)) {
+      to_file(matrix1, output_file_path);
+      return true;
+    }
+    return false;
   }
 }
