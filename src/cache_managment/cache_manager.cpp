@@ -4,6 +4,7 @@
 
 #include "cache_manager.hpp"
 
+#define CACHE_PATH "cache"
 #define FILE_LIST_PATH "./cache/file_list.txt"
 
 void Cache::create_file_list() {
@@ -33,7 +34,7 @@ int Cache::get_action_serial_number(const std::string action_description) {
   create_file_list();
   std::ifstream file_path_input_stream(FILE_LIST_PATH);
   if (!file_path_input_stream) {
-    std::cerr << "Unable to open cache file list1" << std::endl;
+    std::cerr << "Unable to open cache file list" << std::endl;
     return -1;
   }
   while (std::getline(file_path_input_stream, line)) {
@@ -53,7 +54,7 @@ int Cache::get_next_serial_number() {
   create_file_list();
   std::ifstream file_path_input_stream(FILE_LIST_PATH);
   if (!file_path_input_stream) {
-    std::cerr << "Unable to open cache file list2" << std::endl;
+    std::cerr << "Unable to open cache file list" << std::endl;
     return -1;
   }
   while (std::getline(file_path_input_stream, line)) {
@@ -146,7 +147,10 @@ void Cache::load_from(const std::string action_description,
 }
 
 void Cache::clear() {
-  DIR *cache = opendir("cache");
+  DIR* cache;
+  if ((cache = opendir(CACHE_PATH)) == NULL) {
+    std::cerr << "Unable to open cache" << std::endl;
+  }
   struct dirent *next_file;
   std::string filepath;
   while ((next_file = readdir(cache)) != NULL) {
@@ -156,13 +160,14 @@ void Cache::clear() {
       remove(file_path.c_str());
     }
   }
+  free(next_file);
   closedir(cache);
   std::ofstream file_list_output_stream;
   create_file_list();
   file_list_output_stream.open(FILE_LIST_PATH,
                                std::ofstream::out | std::ofstream::trunc);
   if (!file_list_output_stream) {
-    std::cerr << "Unable to open cache file list3" << std::endl;
+    std::cerr << "Unable to open cache file list" << std::endl;
   } else {
     file_list_output_stream.close();
   }
